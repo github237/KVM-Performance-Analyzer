@@ -61,6 +61,22 @@
 MODULE_AUTHOR("Qumranet");
 MODULE_LICENSE("GPL");
 
+/** KVM PERFORMANCE PARAMETERS **/
+
+uint64_t total[45];
+uint64_t totalcount;
+uint64_t totalcycle;
+int64_t start;
+int64_t stop;
+int64_t diff;
+int64_t min[45];
+int64_t max[45];
+uint64_t avj;
+uint64_t sum[45];
+char* name;
+int64_t i;
+int j;
+
 static const struct x86_cpu_id vmx_cpu_id[] = {
 	X86_FEATURE_MATCH(X86_FEATURE_VMX),
 	{}
@@ -8827,7 +8843,863 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
 
 	if (exit_reason < kvm_vmx_max_exit_handlers
 	    && kvm_vmx_exit_handlers[exit_reason])
-		return kvm_vmx_exit_handlers[exit_reason](vcpu);
+	
+
+	{
+		totalcount=totalcount+1;
+		j=j+1;
+		start=rdtsc();
+		i= kvm_vmx_exit_handlers[exit_reason](vcpu);
+		stop=rdtsc();
+		diff=stop-start;
+		totalcycle=totalcycle+diff;
+		switch(exit_reason)
+		{
+			case EXIT_REASON_EXCEPTION_NMI: 
+			{
+				total[0]=total[0]+1;
+				if(min[0]==0)
+					min[0]=diff;
+				if(diff<min[0])
+					min[0]=diff;
+				if(diff>max[0])
+					max[0]=diff;
+				sum[0]=(uint64_t)(sum[0]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_EXTERNAL_INTERRUPT:
+			{
+				total[1]=total[1]+1;
+				if(min[1]==1)
+					min[1]=diff;
+				if(diff<min[1])
+					min[1]=diff;
+				if(diff>max[1])
+					max[1]=diff;
+				sum[1]=(uint64_t)(sum[1]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_TRIPLE_FAULT:
+			{
+				total[2]=total[2]+1;
+				if(min[2]==2)
+					min[2]=diff;
+				if(diff<min[2])
+					min[2]=diff;
+				if(diff>max[2])
+					max[2]=diff;
+				sum[2]=(uint64_t)(sum[2]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_NMI_WINDOW:
+			{
+				total[3]=total[3]+1;
+				if(min[3]==0)
+					min[3]=diff;
+				if(diff<min[3])
+					min[3]=diff;
+				if(diff>max[3])
+					max[3]=diff;
+				sum[3]=(uint64_t)(sum[3]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_IO_INSTRUCTION:
+			{
+				total[4]=total[4]+1;
+				if(min[4]==0)
+					min[4]=diff;
+				if(diff<min[4])
+					min[4]=diff;
+				if(diff>max[4])
+					max[4]=diff;
+				sum[4]=(uint64_t)(sum[4]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_CR_ACCESS:
+			{
+				total[5]=total[5]+1;
+				if(min[5]==0)
+					min[5]=diff;
+				if(diff<min[5])
+					min[5]=diff;
+				if(diff>max[5])
+					max[5]=diff;
+				sum[5]=(uint64_t)(sum[5]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_DR_ACCESS:
+			{
+				total[6]=total[6]+1;
+				if(min[6]==0)
+					min[6]=diff;
+				if(diff<min[6])
+					min[6]=diff;
+				if(diff>max[6])
+					max[6]=diff;
+				sum[6]=(uint64_t)(sum[6]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_CPUID:
+			{
+				total[7]=total[7]+1;
+				if(min[7]==0)
+					min[7]=diff;
+				if(diff<min[7])
+					min[7]=diff;
+				if(diff>max[7])
+					max[7]=diff;
+				sum[7]=(uint64_t)(sum[7]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_MSR_READ:
+			{
+				total[8]=total[8]+1;
+				if(min[8]==0)
+					min[8]=diff;
+				if(diff<min[8])
+					min[8]=diff;
+				if(diff>max[8])
+					max[8]=diff;
+				sum[8]=(uint64_t)(sum[8]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_MSR_WRITE:
+			{
+				total[9]=total[9]+1;
+				if(min[9]==0)
+					min[9]=diff;
+				if(diff<min[9])
+					min[9]=diff;
+				if(diff>max[9])
+					max[9]=diff;
+				sum[9]=(uint64_t)(sum[9]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_PENDING_INTERRUPT:
+			{
+				total[10]=total[10]+1;
+				if(min[10]==0)
+					min[10]=diff;
+				if(diff<min[10])
+					min[10]=diff;
+				if(diff>max[10])
+					max[10]=diff;
+				sum[10]=(uint64_t)(sum[10]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_HLT:
+			{
+				total[11]=total[11]+1;
+				if(min[11]==0)
+					min[11]=diff;
+				if(diff<min[11])
+					min[11]=diff;
+				if(diff>max[11])
+					max[11]=diff;
+				sum[11]=(uint64_t)(sum[11]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_INVD:
+			{
+				total[12]=total[12]+1;
+				if(min[12]==0)
+					min[12]=diff;
+				if(diff<min[12])
+					min[12]=diff;
+				if(diff>max[12])
+					max[12]=diff;
+				sum[12]=(uint64_t)(sum[12]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_INVLPG:
+			{
+				total[13]=total[13]+1;
+				if(min[13]==0)
+					min[13]=diff;
+				if(diff<min[13])
+					min[13]=diff;
+				if(diff>max[13])
+					max[13]=diff;
+				sum[13]=(uint64_t)(sum[13]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_RDPMC:
+			{
+				total[14]=total[14]+1;
+				if(min[14]==0)
+					min[14]=diff;
+				if(diff<min[14])
+					min[14]=diff;
+				if(diff>max[14])
+					max[14]=diff;
+				sum[14]=(uint64_t)(sum[14]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMCALL:
+			{
+				total[15]=total[15]+1;
+				if(min[15]==0)
+					min[15]=diff;
+				if(diff<min[15])
+					min[15]=diff;
+				if(diff>max[15])
+					max[15]=diff;
+				sum[15]=(uint64_t)(sum[15]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMCLEAR:
+			{
+				total[16]=total[16]+1;
+				if(min[16]==0)
+					min[16]=diff;
+				if(diff<min[16])
+					min[16]=diff;
+				if(diff>max[16])
+					max[16]=diff;
+				sum[16]=(uint64_t)(sum[16]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMLAUNCH:
+			{
+				total[17]=total[17]+1;
+				if(min[17]==0)
+					min[17]=diff;
+				if(diff<min[17])
+					min[17]=diff;
+				if(diff>max[17])
+					max[17]=diff;
+				sum[17]=(uint64_t)(sum[17]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMPTRLD:
+			{
+				total[18]=total[18]+1;
+				if(min[18]==0)
+					min[18]=diff;
+				if(diff<min[18])
+					min[18]=diff;
+				if(diff>max[18])
+					max[18]=diff;
+				sum[18]=(uint64_t)(sum[18]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMPTRST:
+			{
+				total[19]=total[19]+1;
+				if(min[19]==0)
+					min[19]=diff;
+				if(diff<min[19])
+					min[19]=diff;
+				if(diff>max[19])
+					max[19]=diff;
+				sum[19]=(uint64_t)(sum[19]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMREAD:
+			{
+				total[20]=total[20]+1;
+				if(min[20]==0)
+					min[20]=diff;
+				if(diff<min[20])
+					min[20]=diff;
+				if(diff>max[20])
+					max[20]=diff;
+				sum[20]=(uint64_t)(sum[20]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMRESUME:
+			{
+				total[21]=total[21]+1;
+				if(min[21]==0)
+					min[21]=diff;
+				if(diff<min[21])
+					min[21]=diff;
+				if(diff>max[21])
+					max[21]=diff;
+				sum[21]=(uint64_t)(sum[21]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMWRITE:
+			{
+				total[22]=total[22]+1;
+				if(min[22]==0)
+					min[22]=diff;
+				if(diff<min[22])
+					min[22]=diff;
+				if(diff>max[22])
+					max[22]=diff;
+				sum[22]=(uint64_t)(sum[22]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMOFF:
+			{
+				total[23]=total[23]+1;
+				if(min[23]==0)
+					min[23]=diff;
+				if(diff<min[23])
+					min[23]=diff;
+				if(diff>max[23])
+					max[23]=diff;
+				sum[23]=(uint64_t)(sum[23]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_VMON:
+			{
+				total[24]=total[24]+1;
+				if(min[24]==0)
+					min[24]=diff;
+				if(diff<min[24])
+					min[24]=diff;
+				if(diff>max[24])
+					max[24]=diff;
+				sum[24]=(uint64_t)(sum[24]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_TPR_BELOW_THRESHOLD:
+			{
+				total[25]=total[25]+1;
+				if(min[25]==0)
+					min[25]=diff;
+				if(diff<min[25])
+					min[25]=diff;
+				if(diff>max[25])
+					max[25]=diff;
+				sum[25]=(uint64_t)(sum[25]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_APIC_ACCESS:
+			{
+				total[26]=total[26]+1;
+				if(min[26]==0)
+					min[26]=diff;
+				if(diff<min[26])
+					min[26]=diff;
+				if(diff>max[26])
+					max[26]=diff;
+				sum[26]=(uint64_t)(sum[26]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_APIC_WRITE:
+			{
+				total[27]=total[27]+1;
+				if(min[27]==0)
+					min[27]=diff;
+				if(diff<min[27])
+					min[27]=diff;
+				if(diff>max[27])
+					max[27]=diff;
+				sum[27]=(uint64_t)(sum[27]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_EOI_INDUCED:
+			{
+				total[28]=total[28]+1;
+				if(min[28]==0)
+					min[28]=diff;
+				if(diff<min[28])
+					min[28]=diff;
+				if(diff>max[28])
+					max[28]=diff;
+				sum[28]=(uint64_t)(sum[28]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_WBINVD:
+			{
+				total[29]=total[29]+1;
+				if(min[29]==0)
+					min[29]=diff;
+				if(diff<min[29])
+					min[29]=diff;
+				if(diff>max[29])
+					max[29]=diff;
+				sum[29]=(uint64_t)(sum[29]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_XSETBV:
+			{
+				total[30]=total[30]+1;
+				if(min[30]==0)
+					min[30]=diff;
+				if(diff<min[30])
+					min[30]=diff;
+				if(diff>max[30])
+					max[30]=diff;
+				sum[30]=(uint64_t)(sum[30]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_TASK_SWITCH:
+			{
+				total[31]=total[31]+1;
+				if(min[31]==0)
+					min[31]=diff;
+				if(diff<min[31])
+					min[31]=diff;
+				if(diff>max[31])
+					max[31]=diff;
+				sum[31]=(uint64_t)(sum[31]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_MCE_DURING_VMENTRY:
+			{
+				total[32]=total[32]+1;
+				if(min[32]==0)
+					min[32]=diff;
+				if(diff<min[32])
+					min[32]=diff;
+				if(diff>max[32])
+					max[32]=diff;
+				sum[32]=(uint64_t)(sum[32]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_EPT_VIOLATION:
+			{
+				total[33]=total[33]+1;
+				if(min[33]==0)
+					min[33]=diff;
+				if(diff<min[33])
+					min[33]=diff;
+				if(diff>max[33])
+					max[33]=diff;
+				sum[33]=(uint64_t)(sum[33]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_EPT_MISCONFIG:
+			{
+				total[34]=total[34]+1;
+				if(min[34]==0)
+					min[34]=diff;
+				if(diff<min[34])
+					min[34]=diff;
+				if(diff>max[34])
+					max[34]=diff;
+				sum[34]=(uint64_t)(sum[34]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_PAUSE_INSTRUCTION:
+			{
+				total[35]=total[35]+1;
+				if(min[35]==0)
+					min[35]=diff;
+				if(diff<min[35])
+					min[35]=diff;
+				if(diff>max[35])
+					max[35]=diff;
+				sum[35]=(uint64_t)(sum[35]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_MWAIT_INSTRUCTION:
+			{
+				total[36]=total[36]+1;
+				if(min[36]==0)
+					min[36]=diff;
+				if(diff<min[36])
+					min[36]=diff;
+				if(diff>max[36])
+					max[36]=diff;
+				sum[36]=(uint64_t)(sum[36]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_MONITOR_TRAP_FLAG:
+			{
+				total[37]=total[37]+1;
+				if(min[37]==0)
+					min[37]=diff;
+				if(diff<min[37])
+					min[37]=diff;
+				if(diff>max[37])
+					max[37]=diff;
+				sum[37]=(uint64_t)(sum[37]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_MONITOR_INSTRUCTION:
+			{
+				total[38]=total[38]+1;
+				if(min[38]==0)
+					min[38]=diff;
+				if(diff<min[38])
+					min[38]=diff;
+				if(diff>max[38])
+					max[38]=diff;
+				sum[38]=(uint64_t)(sum[38]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_INVEPT:
+			{
+				total[39]=total[39]+1;
+				if(min[39]==0)
+					min[39]=diff;
+				if(diff<min[39])
+					min[39]=diff;
+				if(diff>max[39])
+					max[39]=diff;
+				sum[39]=(uint64_t)(sum[39]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_INVVPID:
+			{
+				total[40]=total[40]+1;
+				if(min[40]==0)
+					min[40]=diff;
+				if(diff<min[40])
+					min[40]=diff;
+				if(diff>max[40])
+					max[40]=diff;
+				sum[40]=(uint64_t)(sum[40]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_XSAVES:
+			{
+				total[41]=total[41]+1;
+				if(min[41]==0)
+					min[41]=diff;
+				if(diff<min[41])
+					min[41]=diff;
+				if(diff>max[41])
+					max[41]=diff;
+				sum[41]=(uint64_t)(sum[41]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_XRSTORS:
+			{
+				total[42]=total[42]+1;
+				if(min[42]==0)
+					min[42]=diff;
+				if(diff<min[42])
+					min[42]=diff;
+				if(diff>max[42])
+					max[42]=diff;
+				sum[42]=(uint64_t)(sum[42]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_PML_FULL:
+			{
+				total[43]=total[43]+1;
+				if(min[43]==0)
+					min[43]=diff;
+				if(diff<min[43])
+					min[43]=diff;
+				if(diff>max[43])
+					max[43]=diff;
+				sum[43]=(uint64_t)(sum[43]+(uint64_t)diff);
+				break;
+			}
+			case EXIT_REASON_PREEMPTION_TIMER:
+			{
+				total[44]=total[44]+1;
+				if(min[44]==0)
+					min[44]=diff;
+				if(diff<min[44])
+					min[44]=diff;
+				if(diff>max[44])
+					max[44]=diff;
+				sum[44]=(uint64_t)(sum[44]+(uint64_t)diff);
+				break;
+			}
+		}
+
+
+		if(j>=500)
+		{
+			uint8_t x;
+			j=0;
+			name=NULL;
+			printk("Total Exits: %llu Total Cycles: %llu",(unsigned long long)totalcount, (unsigned long long)totalcycle);
+			printk("Exception type \t \t \ttotal \t \tmin \t \tmax \t \tavj");
+			printk(" ");
+
+			for(x=0;x<45;x++)
+			{
+		
+				if(total[x]==0)
+					continue;
+				else
+					avj=(uint64_t)((uint64_t)sum[x]/total[x]);
+
+				switch(x)
+					{
+						case 0: 
+						{
+							name=kmalloc(sizeof("EXCEPTION_NMI")+1, GFP_KERNEL);
+			    			strcpy(name, "EXCEPTION_NMI");
+							break;
+						}
+						case 1:
+						{
+							name=kmalloc(sizeof("EXTERNAL_INTERRUPT")+1, GFP_KERNEL);
+			    			strcpy(name, "EXTERNAL_INTERRUPT");
+							break;
+						}
+						case 2:
+						{
+							name=kmalloc(sizeof("TRIPLE_FAULT")+1, GFP_KERNEL);
+			    			strcpy(name, "TRIPLE_FAULT");
+							break;
+						}
+						case 3:
+						{
+							name=kmalloc(sizeof("NMI_WINDOW")+1, GFP_KERNEL);
+			    			strcpy(name, "NMI_WINDOW");
+							break;
+						}
+						case 4:
+						{
+							name=kmalloc(sizeof("IO_INSTRUCTION")+1, GFP_KERNEL);
+			    			strcpy(name, "IO_INSTRUCTION");
+							break;
+						}
+						case 5:
+						{
+							name=kmalloc(sizeof("CR_ACCESS")+1, GFP_KERNEL);
+			    			strcpy(name, "CR_ACCESS");
+							break;
+						}
+						case 6:
+						{
+							name=kmalloc(sizeof("DR_ACCESS")+1, GFP_KERNEL);
+			    			strcpy(name, "DR_ACCESS");
+							break;
+						}
+						case 7:
+						{
+							name=kmalloc(sizeof("CPUID")+1, GFP_KERNEL);
+			    			strcpy(name, "CPUID");
+							break;
+						}
+						case 8:
+						{
+							name=kmalloc(sizeof("MSR_READ")+1, GFP_KERNEL);
+			    			strcpy(name, "MSR_READ");
+							break;
+						}
+						case 9:
+						{
+							name=kmalloc(sizeof("MSR_WRITE")+1, GFP_KERNEL);
+			    			strcpy(name, "MSR_WRITE");
+							break;
+						}
+						case 10:
+						{
+							name=kmalloc(sizeof("PENDING_INTERRUPT")+1, GFP_KERNEL);
+			    			strcpy(name, "PENDING_INTERRUPT");
+							break;
+						}
+						case 11:
+						{
+							name=kmalloc(sizeof("HLT")+1, GFP_KERNEL);
+			    			strcpy(name, "HLT");
+							break;
+						}
+						case 12:
+						{
+							name=kmalloc(sizeof("INVD")+1, GFP_KERNEL);
+			    			strcpy(name, "INVD");
+							break;
+						}
+						case 13:
+						{
+							name=kmalloc(sizeof("INVLPG")+1, GFP_KERNEL);
+			    			strcpy(name, "INVLPG");
+							break;
+						}
+						case 14:
+						{
+							name=kmalloc(sizeof("RDPMC")+1, GFP_KERNEL);
+			    			strcpy(name, "RDPMC");
+							break;
+						}
+						case 15:
+						{
+							name=kmalloc(sizeof("VMCALL")+1, GFP_KERNEL);
+			    			strcpy(name, "VMCALL");
+							break;
+						}
+						case 16:
+						{
+							name=kmalloc(sizeof("VMCLEAR")+1, GFP_KERNEL);
+			    			strcpy(name, "VMCLEAR");
+							break;
+						}
+						case 17:
+						{
+							name=kmalloc(sizeof("VMLAUNCH")+1, GFP_KERNEL);
+			    			strcpy(name, "VMLAUNCH");
+							break;
+						}
+						case 18:
+						{
+							name=kmalloc(sizeof("VMPTRLD")+1, GFP_KERNEL);
+			    			strcpy(name, "VMPTRLD");
+							break;
+						}
+						case 19:
+						{
+							name=kmalloc(sizeof("VMPTRST")+1, GFP_KERNEL);
+			    			strcpy(name, "VMPTRST");
+							break;
+						}
+						case 20:
+						{
+							name=kmalloc(sizeof("VMREAD")+1, GFP_KERNEL);
+			    			strcpy(name, "VMREAD");
+							break;
+						}
+						case 21:
+						{
+							name=kmalloc(sizeof("VMRESUME")+1, GFP_KERNEL);
+			    			strcpy(name, "VMRESUME");
+							break;
+						}
+						case 22:
+						{
+							name=kmalloc(sizeof("VMWRITE")+1, GFP_KERNEL);
+			    			strcpy(name, "VMWRITE");
+							break;
+						}
+						case 23:
+						{
+							name=kmalloc(sizeof("VMOFF")+1, GFP_KERNEL);
+			    			strcpy(name, "VMOFF");
+							break;
+						}
+						case 24:
+						{
+							name=kmalloc(sizeof("VMON")+1, GFP_KERNEL);
+			    			strcpy(name, "VMON");
+							break;
+						}
+						case 25:
+						{
+							name=kmalloc(sizeof("TPR_BELOW_THRESHOLD")+1, GFP_KERNEL);
+			    			strcpy(name, "TPR_BELOW_THRESHOLD");
+							break;
+						}
+						case 26:
+						{
+							name=kmalloc(sizeof("APIC_ACCESS")+1, GFP_KERNEL);
+			    			strcpy(name, "APIC_ACCESS");
+							break;
+						}
+						case 27:
+						{
+							name=kmalloc(sizeof("APIC_WRITE")+1, GFP_KERNEL);
+			    			strcpy(name, "APIC_WRITE");
+							break;
+						}
+						case 28:
+						{
+							name=kmalloc(sizeof("EOI_INDUCED")+1, GFP_KERNEL);
+			    			strcpy(name, "EOI_INDUCED");
+							break;
+						}
+						case 29:
+						{
+							name=kmalloc(sizeof("WBINVD")+1, GFP_KERNEL);
+			    			strcpy(name, "WBINVD");
+							break;
+						}
+						case 30:
+						{
+							name=kmalloc(sizeof("XSETBV")+1, GFP_KERNEL);
+			    			strcpy(name, "XSETBV");
+							break;
+						}
+						case 31:
+						{
+							name=kmalloc(sizeof("TASK_SWITCH")+1, GFP_KERNEL);
+			    			strcpy(name, "TASK_SWITCH");
+							break;
+						}
+						case 32:
+						{
+							name=kmalloc(sizeof("MCE_DURING_VMENTRY")+1, GFP_KERNEL);
+			    			strcpy(name, "MCE_DURING_VMENTRY");
+							break;
+						}
+						case 33:
+						{
+							name=kmalloc(sizeof("EPT_VIOLATION")+1, GFP_KERNEL);
+			    			strcpy(name, "EPT_VIOLATION");
+							break;
+						}
+						case 34:
+						{
+							name=kmalloc(sizeof("EPT_MISCONFIG")+1, GFP_KERNEL);
+			    			strcpy(name, "EPT_MISCONFIG");
+							break;
+						}
+						case 35:
+						{
+							name=kmalloc(sizeof("PAUSE_INSTRUCTION")+1, GFP_KERNEL);
+			    			strcpy(name, "PAUSE_INSTRUCTION");
+							break;
+						}
+						case 36:
+						{
+							name=kmalloc(sizeof("MWAIT_INSTRUCTION")+1, GFP_KERNEL);
+			    			strcpy(name, "MWAIT_INSTRUCTION");
+							break;
+						}
+						case 37:
+						{
+							name=kmalloc(sizeof("MONITOR_TRAP_FLAG")+1, GFP_KERNEL);
+			    			strcpy(name, "MONITOR_TRAP_FLAG");
+							break;
+						}
+						case 38:
+						{
+							name=kmalloc(sizeof("MONITOR_INSTRUCTION")+1, GFP_KERNEL);
+			    			strcpy(name, "MONITOR_INSTRUCTION");
+							break;
+						}
+						case 39:
+						{
+							name=kmalloc(sizeof("INVEPT")+1, GFP_KERNEL);
+			    			strcpy(name, "INVEPT");
+							break;
+						}
+						case 40:
+						{
+							name=kmalloc(sizeof("INVVPID")+1, GFP_KERNEL);
+			    			strcpy(name, "INVVPID");
+							break;
+						}
+						case 41:
+						{
+							name=kmalloc(sizeof("XSAVES")+1, GFP_KERNEL);
+			    			strcpy(name, "XSAVES");
+							break;
+						}
+						case 42:
+						{
+							name=kmalloc(sizeof("XRSTORS")+1, GFP_KERNEL);
+			    			strcpy(name, "XRSTORS");
+							break;
+						}
+						case 43:
+						{
+							name=kmalloc(sizeof("PML_FULL")+1, GFP_KERNEL);
+			    			strcpy(name, "PML_FULL");
+							break;
+						}
+						case 44:
+						{
+							name=kmalloc(sizeof("PREEMPTION_TIMER")+1, GFP_KERNEL);
+			    			strcpy(name, "PREEMPTION_TIMER");
+							break;
+						}
+					}
+				printk("%s \t \t total: %llu \t\t min: %lld \t\t max: %lld \t\t avj: %llu", name, (unsigned long long)total[x], 					(long long)min[x], (long long)max[x], (unsigned long long)avj);
+				//total[x]=0;
+				name=NULL;
+				/*sum[x]=0;
+				min[x]=0;
+				max[x]=0;*/
+			}
+
+		}
+		return i;
+	}
+
 	else {
 		vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n",
 				exit_reason);
